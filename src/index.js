@@ -38,7 +38,9 @@ function create_xmlns(tagName,attributes){
 }
 
 async function createElement(parent,props){
-    const response = await fetch(props.src);
+    const file = window.location.origin+props.src;
+    console.log(file)
+    const response = await fetch(file);
     const svg_text = await response.text();
     parent.insertAdjacentHTML("beforeend",svg_text)
     let elements = parent.getElementsByTagName("svg")
