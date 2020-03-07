@@ -2,7 +2,7 @@ import * as svgm from "../src/index.js";
 
 
 async function main(){
-    let svg = await svgm.createElement(document.body,{src:"../demo/diagram.svg",id:"diagram_a"});
+    let svg = await svgm.createElement(document.body,{src:"./demo/diagram.svg",id:"diagram_a"});
     console.log(`created svg element '${svg.id}'`);
     window.addEventListener('text_click',onTextClick);
 }
