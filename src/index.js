@@ -7,6 +7,17 @@ const config = {
     "scale_max"  :5
 }
 
+const filter=/*html*/`<filter id="sofGlow" height="300%" width="300%" x="-75%" y="-75%">
+         <feMorphology operator="dilate" radius="4" in="SourceAlpha" result="thicken" />
+         <feGaussianBlur in="thicken" stdDeviation="5" result="blurred" />
+         <feFlood flood-color="rgb(0,0,0)" result="glowColor" />
+         <feComposite in="glowColor" in2="blurred" operator="in" result="softGlow_colored" />
+         <feMerge>
+            <feMergeNode in="softGlow_colored"/>
+            <feMergeNode in="SourceGraphic"/>
+         </feMerge>
+      </filter>`
+
 const animations = {
     "opacity":{attributeType:"CSS",attributeName:"opacity",from:"1",to:"0",dur:"500ms",repeatCount:"3"}
 };
@@ -39,7 +50,6 @@ function create_xmlns(tagName,attributes){
 
 async function createElement(parent,props){
     const file = window.location.origin+props.src;
-    console.log(file)
     const response = await fetch(file);
     const svg_text = await response.text();
     parent.insertAdjacentHTML("beforeend",svg_text)
@@ -51,8 +61,20 @@ async function createElement(parent,props){
         res_svg.id = `svg_${Math.round(1000000*Math.random())}`;
     }
     svg_transform_init(res_svg);
-    add_events(res_svg);
+    if(defined(props.enable) && props.enable){
+        add_events(res_svg);
+    }
     return res_svg;
+}
+
+function setProperty(svg,props){
+    if(defined(props.enable)){
+        if(props.enable){
+            add_events(svg);
+        }else{
+            remove_events(svg);
+        }
+    }
 }
 
 function highlightText(svg,text,type="opacity"){
@@ -73,19 +95,43 @@ function add_events(svg){
     svg.addEventListener( 'touchstart', onMousePan, false );
     svg.addEventListener( 'touchend', onMousePan, false );
     svg.addEventListener( 'mousedown', onMousePan, false );
-    //svg.addEventListener( 'mouseup', onMousePan, false );
     svg.addEventListener( 'mousemove', onMousePan, false );
     svg.addEventListener( 'wheel', onWheel, false );
-//    svg.addEventListener( 'click', onClick, false );
+    svg.addEventListener( 'click', onClick, false );
     svg.addEventListener( 'contextmenu', onContext, false );
+    svg.querySelectorAll('tspan').forEach((tspan)=>{
+        tspan.style.cursor = "pointer";
+        if(tspan.innerHTML == "Parcel"){
+            tspan.parentElement.parentElement.setAttribute("filter","url(#sofGlow)");
+        }
+    });
+    svg.querySelector("defs").insertAdjacentHTML("beforeend",filter);
 }
+
+function remove_events(svg){
+    svg.removeEventListener( 'touchstart', onMousePan);
+    svg.removeEventListener( 'touchend', onMousePan);
+    svg.removeEventListener( 'mousedown', onMousePan);
+    svg.removeEventListener( 'mousemove', onMousePan);
+    svg.removeEventListener( 'wheel', onWheel);
+    svg.removeEventListener( 'click', onClick);
+    svg.removeEventListener( 'contextmenu', onContext);
+    svg.querySelectorAll('tspan').forEach((tspan)=>{
+        tspan.style.cursor = "default";
+    })
+}
+
 function onClick(e){
+    if(e.target.tagName == "tspan"){
+        let svg = get_svg(e.target);
+        send_event("text_click",{svg:svg,text:e.target.innerHTML,click:"left"});
+    }
 }
 
 function onContext(e){
     if(e.target.tagName == "tspan"){
         let svg = get_svg(e.target);
-        send_event("text_click",{svg:svg,text:e.target.innerHTML});
+        send_event("text_click",{svg:svg,text:e.target.innerHTML,click:"right"});
     }
     e.preventDefault();
     e.stopPropagation();
@@ -175,4 +221,14 @@ function svg_shift(element,tx,ty){
     }
 }
 
-export{createElement,highlightText};
+async function createElement_s(parent,props){
+    let svg = await createElement(parent,props);
+    return svg;
+}
+
+export{
+    createElement,
+    createElement_s,
+    highlightText,
+    setProperty,
+};
