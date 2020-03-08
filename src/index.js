@@ -43,6 +43,7 @@ function create_xmlns(tagName,attributes){
  * @return {html element} svg element
  */
 async function createElement(parent,props){
+    console.log(window.location);
     const file = window.location.origin+props.src;
     console.log(`fetching file '${file}'`);
     const response = await fetch(file);
