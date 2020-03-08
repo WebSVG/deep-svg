@@ -7,14 +7,12 @@ async function main(){
     
     console.log(`created svg element '${svg.id}'`);
     window.addEventListener('text_click',onTextClick);
-
-    svgm.highlightText(svg,"Webpack","opacity");
 }
 
 function onTextClick(e){
     if(e.detail.click == "left"){
         console.log(`main> left click on '${e.detail.text}' from '${e.detail.svg.id}'`);
-        svgm.highlightText(e.detail.svg,e.detail.text,"opacity");
+        svgm.highlightText(e.detail.svg,e.detail.text);
     }else{
         console.log(`main> right click on '${e.detail.text}' from '${e.detail.svg.id}'`);
     }

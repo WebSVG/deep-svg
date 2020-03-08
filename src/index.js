@@ -1,3 +1,6 @@
+import * as filters from "../src/svg_filters.js";
+
+let glow,glow_anim;
 
 let state ={coord:{x:0,y:0}};
 
@@ -7,20 +10,6 @@ const config = {
     "scale_max"  :5
 }
 
-const filter=/*html*/`<filter id="sofGlow" height="300%" width="300%" x="-75%" y="-75%">
-         <feMorphology operator="dilate" radius="4" in="SourceAlpha" result="thicken" />
-         <feGaussianBlur in="thicken" stdDeviation="5" result="blurred" />
-         <feFlood flood-color="rgb(0,0,0)" result="glowColor" />
-         <feComposite in="glowColor" in2="blurred" operator="in" result="softGlow_colored" />
-         <feMerge>
-            <feMergeNode in="softGlow_colored"/>
-            <feMergeNode in="SourceGraphic"/>
-         </feMerge>
-      </filter>`
-
-const animations = {
-    "opacity":{attributeType:"CSS",attributeName:"opacity",from:"1",to:"0",dur:"500ms",repeatCount:"3"}
-};
 
 function defined(statement){
     return (typeof(statement) != "undefined")
@@ -48,12 +37,17 @@ function create_xmlns(tagName,attributes){
     return element;
 }
 
+/**
+ * @param {html element} parent 
+ * @param {Object} props : properties containing 'id' and 'enable'
+ * @return {html element} svg element
+ */
 async function createElement(parent,props){
     const file = window.location.origin+props.src;
     const response = await fetch(file);
     const svg_text = await response.text();
-    parent.insertAdjacentHTML("beforeend",svg_text)
-    let elements = parent.getElementsByTagName("svg")
+    parent.insertAdjacentHTML("beforeend",svg_text);
+    let elements = parent.getElementsByTagName("svg");
     let res_svg =  elements[elements.length-1];
     if(defined(props.id)){
         res_svg.id = props.id;
@@ -62,31 +56,39 @@ async function createElement(parent,props){
     }
     svg_transform_init(res_svg);
     if(defined(props.enable) && props.enable){
-        add_events(res_svg);
+        enable(res_svg);
     }
     return res_svg;
+}
+
+function enable(svg){
+    add_events(svg);
+    glow = filters.create(svg,{type:"glow",color:"#c2feff"});
+    glow_anim = filters.create(svg,{type:"glow_anim",color:"#c2feff"});
+}
+
+function disable(svg){
+    remove_events(svg);
+    filters.remove(svg,glow);
+    filters.remove(svg,glow_anim);
 }
 
 function setProperty(svg,props){
     if(defined(props.enable)){
         if(props.enable){
-            add_events(svg);
+            enable(svg);
         }else{
-            remove_events(svg);
+            disable(svg);
         }
     }
 }
 
-function highlightText(svg,text,type="opacity"){
+function highlightText(svg,text,type="glow"){
     const tspans = svg.getElementsByTagName('tspan');
     for(let tspan of tspans){
         if(tspan.innerHTML == text){
-            let highlight = tspan.parentElement.querySelector("animate")
-            if(highlight == null){
-                highlight = create_xmlns("animate",animations[type]);
-                sibling(tspan,highlight);
-            }
-            highlight.beginElement();
+            filters.start(tspan.parentElement.parentElement,glow_anim);
+            console.log("filter attached and started")
         }
     }
 }
@@ -99,13 +101,10 @@ function add_events(svg){
     svg.addEventListener( 'wheel', onWheel, false );
     svg.addEventListener( 'click', onClick, false );
     svg.addEventListener( 'contextmenu', onContext, false );
+
     svg.querySelectorAll('tspan').forEach((tspan)=>{
         tspan.style.cursor = "pointer";
-        if(tspan.innerHTML == "Parcel"){
-            tspan.parentElement.parentElement.setAttribute("filter","url(#sofGlow)");
-        }
     });
-    svg.querySelector("defs").insertAdjacentHTML("beforeend",filter);
 }
 
 function remove_events(svg){
@@ -221,6 +220,12 @@ function svg_shift(element,tx,ty){
     }
 }
 
+/**
+ * Synchronous avriant of createElement, will block durin file fetch and return with the result
+ * @param {html element} parent 
+ * @param {Object} props 
+ * @return {html element} svg element
+ */
 async function createElement_s(parent,props){
     let svg = await createElement(parent,props);
     return svg;
@@ -228,7 +233,7 @@ async function createElement_s(parent,props){
 
 export{
     createElement,
-    createElement_s,
     highlightText,
-    setProperty,
+    enable,
+    disable,
 };

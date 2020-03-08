@@ -1,5 +1,5 @@
 {
-  "name": "zoom-pan-pinch-svg",
+  "name": "svg-view-text-interact",
   "version": "0.1.0",
   "description": "vanilla javascript library with no dependencies for mouse and touch svg interactions. Zoom, Pan, Pinch and more",
   "main": "src\\index.js",
