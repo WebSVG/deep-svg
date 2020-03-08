@@ -15,6 +15,13 @@ function defined(statement){
     return (typeof(statement) != "undefined")
 }
 
+function rel_path(){
+    const path = window.location.pathname;
+    let parts = path.split('/');
+    parts.pop();
+    return parts.join('/');
+}
+
 function sibling(sibl,element){
     sibl.parentElement.appendChild(element);    
 }
@@ -43,8 +50,7 @@ function create_xmlns(tagName,attributes){
  * @return {html element} svg element
  */
 async function createElement(parent,props){
-    console.log(window.location);
-    const file = window.location.origin+props.src;
+    const file = rel_path()+props.src;
     console.log(`fetching file '${file}'`);
     const response = await fetch(file);
     const svg_text = await response.text();
