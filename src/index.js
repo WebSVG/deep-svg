@@ -95,7 +95,7 @@ function highlightText(svg,text,type="glow"){
     const tspans = svg.getElementsByTagName('tspan');
     for(let tspan of tspans){
         if(tspan.innerHTML == text){
-            filters.start(tspan.parentElement.parentElement,glow_anim);
+            filters.start(svg,tspan.parentElement.parentElement,glow_anim);
             console.log("filter attached and started")
         }
     }
@@ -131,14 +131,14 @@ function remove_events(svg){
 function onClick(e){
     if(e.target.tagName == "tspan"){
         let svg = get_svg(e.target);
-        send_event("text_click",{svg:svg,text:e.target.innerHTML,click:"left"});
+        send_event("text_click",{svg:svg,text:e.target.innerHTML,click:"left",id:svg.id});
     }
 }
 
 function onContext(e){
     if(e.target.tagName == "tspan"){
         let svg = get_svg(e.target);
-        send_event("text_click",{svg:svg,text:e.target.innerHTML,click:"right"});
+        send_event("text_click",{svg:svg,text:e.target.innerHTML,click:"right",id:svg.id});
     }
     e.preventDefault();
     e.stopPropagation();

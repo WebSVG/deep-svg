@@ -58,10 +58,10 @@ function dur_to_ms(duration){
  * attaches, plays animation then detaches if not indefinite specified in repeatCount
  * @param {html filter element} filter
  */
-function start(element,filter){
+function start(svg,element,filter){
     attach(element,filter);
     const anim_id = filter.getAttribute("data-anim");
-    const anim = document.getElementById(anim_id);
+    const anim = svg.getElementById(anim_id);
     anim.beginElement();
     if(!(anim.getAttribute("repeatDur") == "indefinite")){
         const duration_ms = dur_to_ms(anim.getAttribute("dur"));

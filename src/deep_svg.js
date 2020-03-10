@@ -22,14 +22,19 @@ class DeepSvg extends HTMLElement{
                 this.body.removeChild(this.svg);
                 console.log("non null svg");
             }
-            this.svg = svgm.createElement_s(this.body,{src:src,enable:enable})
+            //same id concept
+            svgm.createElement(this.body,{src:src,enable:enable,id:this.id})
+            //svgm.createElement(this.body,{src:src,enable:enable,id:`svg_${this.id}`})
+            .then((svg)=>{
+                this.svg = svg;
+                this.ready = true;
+            })
         }
     }
     connectedCallback(){
         console.log("connected");
-        this.load_src();
         this.addEventListener("highlightText",this.highlightText);
-        this.ready = true;
+        this.load_src();
     }
     static get observedAttributes() {
         return ['src','enable'];
@@ -47,8 +52,8 @@ class DeepSvg extends HTMLElement{
                 break;
         }
     }
-    highlightText(e){
-
+    highlightText(text){
+        svgm.highlightText(this.svg,text);
     }
 }
 
