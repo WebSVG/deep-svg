@@ -241,7 +241,9 @@ async function createElement_s(parent,props){
 
 export{
     createElement,
+    createElement_s,
     highlightText,
     enable,
     disable,
+    setProperty
 };
