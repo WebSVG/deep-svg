@@ -6,15 +6,15 @@ async function main(){
     let svg = await svgm.createElement(document.body,{src:"/demo/diagram.svg",id:"diagram_a",enable:true});
     
     console.log(`created svg element '${svg.id}'`);
-    window.addEventListener('text_click',onTextClick);
+    svg.addEventListener('text_click',onTextClick);
 }
 
 function onTextClick(e){
     if(e.detail.click == "left"){
-        console.log(`main> left click on '${e.detail.text}' from '${e.detail.svg.id}'`);
-        svgm.highlightText(e.detail.svg,e.detail.text);
+        console.log(`main> left click on '${e.detail.text}' from '${e.target.id}'`);
+        svgm.highlightText(e.target,e.detail.text);
     }else{
-        console.log(`main> right click on '${e.detail.text}' from '${e.detail.svg.id}'`);
+        console.log(`main> right click on '${e.detail.text}' from '${e.target.id}'`);
     }
 }
 

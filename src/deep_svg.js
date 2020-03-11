@@ -28,6 +28,8 @@ class DeepSvg extends HTMLElement{
             .then((svg)=>{
                 this.svg = svg;
                 this.ready = true;
+                //function encapsulation to keep "this" as the class not the event launcher "svg"
+                this.svg.addEventListener("text_click",(e)=>{this.text_click(e)});
             })
         }
     }
@@ -54,6 +56,10 @@ class DeepSvg extends HTMLElement{
     }
     highlightText(text){
         svgm.highlightText(this.svg,text);
+    }
+    text_click(e){
+        const wbc_evt = new CustomEvent(e.type,{detail:e.detail});
+        this.dispatchEvent(wbc_evt);
     }
 }
 

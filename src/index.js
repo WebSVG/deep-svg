@@ -26,11 +26,6 @@ function sibling(sibl,element){
     sibl.parentElement.appendChild(element);    
 }
 
-function send_event(event_name,data){
-	var event = new CustomEvent(event_name, {detail:data});
-	window.dispatchEvent(event);
-}
-
 function get_svg(target){
     return (target.tagName == "svg")?target:target.closest("svg");
 }
@@ -131,14 +126,16 @@ function remove_events(svg){
 function onClick(e){
     if(e.target.tagName == "tspan"){
         let svg = get_svg(e.target);
-        send_event("text_click",{svg:svg,text:e.target.innerHTML,click:"left",id:svg.id});
+        var event = new CustomEvent("text_click", {detail:{text:e.target.innerHTML,click:"left"}});
+        svg.dispatchEvent(event);
     }
 }
 
 function onContext(e){
     if(e.target.tagName == "tspan"){
         let svg = get_svg(e.target);
-        send_event("text_click",{svg:svg,text:e.target.innerHTML,click:"right",id:svg.id});
+        var event = new CustomEvent("text_click", {detail:{text:e.target.innerHTML,click:"right"}});
+        svg.dispatchEvent(event);
     }
     e.preventDefault();
     e.stopPropagation();
