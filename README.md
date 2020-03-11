@@ -1,6 +1,7 @@
 # deep-svg
 Vanilla javascript and Web Component wrapper, using no dependencies for an svg pan zoom and deep linking. Interactions for making every text clickable and highlatable.
 [Deep Linking](https://en.wikipedia.org/wiki/Deep_linking) allows links winthin html pages, why not generalise this to the text inside svg and without having to edit the svg ?
+Each tspan is enriched with a click event, and the highlight function uses an animated svg filter.
 
 # Live Demo
 https://networkgraphs.github.io/deep-svg/
@@ -29,6 +30,12 @@ deep.addEventListener('text_click',onTextClick);
 deep.highlightText("Rollup");
 ```
 
-# SVG Animations
+# SVG Filter Animation
+The highlight is animated through a morphology filter to create a smooth effect. The `dialate` operator radius is animated before the Gaussian blur is applied to it.
+`Caution : This is vanilla javascript`. Note that the function `anim_wave()` is a generic function that can be placed in any section and starts animating the passed attribute patemeter.
+
+<img src="./media/svg_filters.png">
+
+## References
 * https://developer.mozilla.org/en-US/docs/Web/SVG/Element/animate
 * https://www.w3.org/TR/SVG/animate.html
