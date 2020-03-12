@@ -1,4 +1,4 @@
-import "../src/deep_svg.js";
+import "../src/index.js";
 
 function html(parent,text){
     const fragment = document.createRange().createContextualFragment(text);

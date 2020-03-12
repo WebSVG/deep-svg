@@ -32,6 +32,7 @@ deep.highlightText("Rollup");
 
 # SVG Filter Animation
 The highlight is animated through a morphology filter to create a smooth effect. The `dialate` operator radius is animated before the Gaussian blur is applied to it.
+
 `Caution : This is vanilla javascript`. Note that the function `anim_wave()` is a generic function that can be placed in any section and starts animating the passed attribute patemeter.
 
 <img src="./media/svg_filters.png">

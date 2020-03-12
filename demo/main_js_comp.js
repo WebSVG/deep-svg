@@ -1,4 +1,4 @@
-import * as svgm from "../src/index.js";
+import * as svgm from "../src/js_comp.js";
 
 
 async function main(){
