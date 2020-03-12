@@ -10,24 +10,24 @@ https://networkgraphs.github.io/deep-svg/
 <img src="./media/demo.gif" width=500>
 
 # Usage
-## as a vanilla javascript module
-```javascript
-import * as svgm from "../src/index.js";
-
-let svg = await svgm.createElement(document.body,{src:"/demo/diagram.svg",id:"diagram_a",enable:true});
-svg.addEventListener('text_click',onTextClick);
-svgm.highlightText(svg,"Rollup");
-```
-
 ## as a web component
 Note that `html()` is a 3 line helper function and `/*html*/` helps lint the html text with the 'es6-string-html' plugin
 ```javascript
-import "../src/deep_svg.js";
+import "../src/index.js";
 
 const src = "/demo/diagram.svg"
 const deep = html(document.body,/*html*/`<deep-svg id="id1" src=${src} enable="true" />`);
 deep.addEventListener('text_click',onTextClick);
 deep.highlightText("Rollup");
+```
+
+## as a vanilla javascript module
+```javascript
+import * as svgm from "../src/js_comp.js";
+
+let svg = await svgm.createElement(document.body,{src:"/demo/diagram.svg",id:"diagram_a",enable:true});
+svg.addEventListener('text_click',onTextClick);
+svgm.highlightText(svg,"Rollup");
 ```
 
 # SVG Filter Animation
