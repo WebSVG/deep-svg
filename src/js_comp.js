@@ -10,6 +10,16 @@ const config = {
     "scale_max"  :5
 }
 
+const events = [
+    {name:'touchstart',callback: onTouchPan},
+    {name:'touchmove',callback: onTouchPan},
+    {name:'mousedown',callback: onMousePan},
+    {name:'mousemove',callback: onMousePan},
+    {name:'wheel',callback: onWheel},
+    {name:'click',callback: onClick},
+    {name:'contextmenu',callback: onContext}
+]
+
 
 function defined(statement){
     return (typeof(statement) != "undefined")
@@ -97,13 +107,9 @@ function highlightText(svg,text,type="glow"){
 }
 
 function add_events(svg){
-    svg.addEventListener( 'touchstart', onMousePan, false );
-    svg.addEventListener( 'touchend', onMousePan, false );
-    svg.addEventListener( 'mousedown', onMousePan, false );
-    svg.addEventListener( 'mousemove', onMousePan, false );
-    svg.addEventListener( 'wheel', onWheel, false );
-    svg.addEventListener( 'click', onClick, false );
-    svg.addEventListener( 'contextmenu', onContext, false );
+    events.forEach((evt)=>{
+        svg.addEventListener( evt.name, evt.callback, false );
+    })
 
     svg.querySelectorAll('tspan').forEach((tspan)=>{
         tspan.style.cursor = "pointer";
@@ -111,13 +117,9 @@ function add_events(svg){
 }
 
 function remove_events(svg){
-    svg.removeEventListener( 'touchstart', onMousePan);
-    svg.removeEventListener( 'touchend', onMousePan);
-    svg.removeEventListener( 'mousedown', onMousePan);
-    svg.removeEventListener( 'mousemove', onMousePan);
-    svg.removeEventListener( 'wheel', onWheel);
-    svg.removeEventListener( 'click', onClick);
-    svg.removeEventListener( 'contextmenu', onContext);
+    events.forEach((evt)=>{
+        svg.removeEventListener( evt.name, evt.callback);
+    })
     svg.querySelectorAll('tspan').forEach((tspan)=>{
         tspan.style.cursor = "default";
     })
@@ -146,14 +148,35 @@ function onMousePan(e){
     let my = e.clientY;//e.offsetY
     let dx = mx - state.coord.x;
     let dy = my - state.coord.y;
-    if((e.buttons == 1) && (e.type == "mousemove")){
+    if((e.type == "mousemove") && (e.buttons == 1)){
         let svg = get_svg(e.target);
         svg_shift(svg,dx,dy);
+        //console.log(`dx=${dx} , dy=${dy}`);
     }
     state.coord.x = mx;
     state.coord.y = my;
     e.preventDefault();
     e.stopPropagation();
+}
+
+function onTouchPan(e){
+    if(e.touches.length != 1){
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+    }
+    let mx = e.touches[0].clientX;//e.offsetX
+    let my = e.touches[0].clientY;//e.offsetY
+    let dx = mx - state.coord.x;
+    let dy = my - state.coord.y;
+    //console.log(e);
+    if(e.type == "touchmove"){
+        let svg = get_svg(e.target);
+        svg_shift(svg,dx,dy);
+    }
+    //console.log(`dx=${dx} , dy=${dy}`);
+    state.coord.x = mx;
+    state.coord.y = my;
 }
 
 function onWheel(e){
