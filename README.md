@@ -4,7 +4,7 @@ Vanilla javascript and Web Component wrapper, using no dependencies for an svg p
 Each tspan is enriched with a click event, and the highlight function uses an animated svg filter.
 
 # Live Demo
-https://networkgraphs.github.io/deep-svg/
+https://websvg.github.io/deep-svg/
 
 # Gif Demo
 <img src="./media/demo.gif" width=500>
